@@ -9,7 +9,6 @@ using WeeklyFuelPrices;
 var environment = Environment.GetEnvironmentVariable("NETCORE_ENVIRONMENT");
 IConfiguration config = new ConfigurationBuilder()
                             .AddEnvironmentVariables()
-                            .AddUserSecrets<Program>()
                             .AddJsonFile("appsettings.json")
                             .AddJsonFile($"appsettings.{environment}.json", optional: true)
                             .Build();
@@ -41,3 +40,5 @@ IHost host =Host.CreateDefaultBuilder(args)
             logging.AddConsole();
         })
      .Build();
+
+await host.RunAsync();

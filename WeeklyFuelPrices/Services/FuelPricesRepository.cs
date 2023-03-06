@@ -14,17 +14,14 @@ namespace WeeklyFuelPrices.Services
 
         public FuelPricesRepository(IConfiguration config, ILogger<FuelPricesRepository> logger)
         {
-            connectionString = config.GetConnectionString("default")
-                               + "password="
-                               + config.GetValue<string>("mySqlPassword")
-                               + ";";
+            connectionString = config.GetConnectionString("default");
             _logger = logger;
         }
 
         public void AddFuelPrice(FuelPrices fuelPrices) 
         {
             using var connection = new MySqlConnection(connectionString);
-            int results = connection.Execute(@"insert FuelPrices(Date, Price) values (@Date, @Price)", new { fuelPrices.Price_Fuel, fuelPrices.Date_Price });
+            int results = connection.Execute(@"insert fuelprices(Date_Price, Price_Fuel) values (@Date_Price, @Price_Fuel) on duplicate key update Date_Price = @Date_Price", new { fuelPrices.Price_Fuel, fuelPrices.Date_Price });
 
             if (results == 0)
             {
@@ -39,7 +36,7 @@ namespace WeeklyFuelPrices.Services
         public string GetFuelPrice(string date)
         {
             using var connection = new MySqlConnection(connectionString);
-            string dbvalue = connection.Query<string>("select Date_Price from fuelpricesdb where Date_Price = @Date_Price", new { date }).FirstOrDefault("");
+            string dbvalue = connection.Query<string>("select Date_Price from fuelprices where Date_Price = @Date_Price", new { date }).FirstOrDefault("");
             return dbvalue;
         }
     }
